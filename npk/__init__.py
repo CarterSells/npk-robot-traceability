@@ -1,0 +1,1 @@
+"""NPK local traceability prototype."""

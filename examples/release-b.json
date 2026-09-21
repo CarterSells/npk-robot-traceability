@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "release_id": "demo-release-b",
+  "project": {
+    "id": "demo-project",
+    "name": "Synthetic arm lab"
+  },
+  "creator": "Synthetic demo",
+  "artifacts": [
+    {
+      "type": "hardware",
+      "label": "Motor mount B",
+      "source": "https://example.com/npk/hardware/mount-b",
+      "version": "hw-mount-b-002"
+    },
+    {
+      "type": "firmware",
+      "label": "Arm controller",
+      "source": "https://example.com/npk/firmware/controller",
+      "version": "f9a412a0c26d5b71a0fbc7cd1a9107c732ac691e"
+    },
+    {
+      "type": "dataset",
+      "label": "Synthetic grasp recordings",
+      "source": "https://example.com/npk/data/grasp-v1",
+      "version": "dataset-2026-09-01-v1"
+    },
+    {
+      "type": "model",
+      "label": "Grasp policy A",
+      "source": "https://example.com/npk/models/policy-a",
+      "version": "policy-a-checkpoint-0042"
+    },
+    {
+      "type": "configuration",
+      "label": "Bench configuration",
+      "source": "https://example.com/npk/config/bench-v1",
+      "version": "bench-config-001"
+    }
+  ],
+  "parent_release_id": "demo-release-a"
+}
