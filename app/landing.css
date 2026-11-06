@@ -1,0 +1,60 @@
+.landing-page{background:var(--paper);color:var(--ink)}
+.landing-page .home-hero{padding-block:104px 88px}
+.landing-page .hero-copy{max-width:880px}
+.landing-page h1{font-family:Georgia,'Times New Roman',serif;font-size:clamp(44px,6vw,80px);line-height:1.08;letter-spacing:-.05em;font-weight:400}
+.landing-page h1 span{color:#c4c4c4}
+.landing-page .home-intro{max-width:580px;font-size:17px}
+.signal-square{display:inline-block;width:6px;height:6px;border-radius:50%;background:#ccc;margin-right:8px}
+.config-strip{display:flex;flex-wrap:wrap;gap:12px 32px;padding-block:24px;border-block:1px solid var(--line);font-size:12px;color:var(--muted)}
+.config-strip a{color:var(--ink)}
+.configuration-section{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;padding-block:80px;border-bottom:1px solid var(--line)}
+.configuration-section>div:first-child p{max-width:390px}.layer-explorer{min-width:0}
+.config-illustration{position:relative;border:1px solid var(--line);border-radius:8px;background:var(--surface);overflow:hidden}
+.config-illustration svg{display:block;width:100%;height:auto;max-height:260px;filter:grayscale(1)}
+.drawing-header,.drawing-footer{display:flex;justify-content:space-between;gap:12px;padding:12px 16px;font:10px/1.5 Consolas,monospace;color:var(--muted)}
+.drawing-header{border-bottom:1px solid var(--line)}.drawing-footer{border-top:1px solid var(--line)}
+.drawing-label{position:absolute;font:10px/1.5 Consolas,monospace;padding:4px 6px;border:1px solid #555;border-radius:3px;background:#181818;color:#ccc}
+.label-hardware{left:3%;top:33%}.label-policy{right:8%;top:17%}.label-firmware{right:2%;top:38%}.label-calibration{left:3%;bottom:28%}
+.layer-prompt{font-size:12px;margin:16px 0 8px}.layer-controls{display:flex;flex-wrap:wrap;gap:8px}
+.landing-page button{font:inherit}
+.layer-controls button,.comparison-filters button,.close-evidence{padding:10px 14px;min-height:44px;border:1px solid var(--control);border-radius:6px;background:var(--surface);color:var(--ink);font-size:12px}
+.layer-controls button:hover,.comparison-filters button:hover,.close-evidence:hover{background:#252525}
+.layer-controls button[aria-pressed=true],.comparison-filters button[aria-pressed=true]{background:#eee;color:#111;border-color:#eee}
+.layer-description{font-size:13px;margin:16px 0 0;min-height:90px}
+.layer-explorer[data-layer=hardware] .label-hardware,.layer-explorer[data-layer=policy] .label-policy,.layer-explorer[data-layer=calibration] .label-calibration,.layer-explorer[data-layer=calibration] .label-firmware{background:#eee;color:#111}
+.home-screen{padding-block:80px}.home-section-heading h2{max-width:560px}
+.live-comparison{min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.scenario-picker{display:flex;border-bottom:1px solid var(--line);padding:0 20px;gap:12px}
+.scenario-picker button{border:0;border-bottom:2px solid transparent;background:transparent;color:var(--muted);min-height:60px;padding:16px 12px;text-align:left}
+.scenario-picker button small,.scenario-picker button span{display:none}
+.scenario-picker button strong{font-size:13px;font-weight:500}
+.scenario-picker button:hover{color:var(--ink)}.scenario-picker button[aria-pressed=true]{color:var(--ink);border-bottom-color:var(--ink)}
+.comparison-toolbar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:24px;border-bottom:1px solid var(--line)}
+.comparison-toolbar>div{display:flex;flex-direction:column;gap:8px}.comparison-toolbar strong{font-size:14px;font-weight:500}.comparison-toolbar label{font-size:12px;color:var(--muted)}
+.live-comparison select{min-height:44px;max-width:100%;background:var(--raised);border:1px solid var(--control);border-radius:6px;padding:10px 12px;color:var(--ink);font-size:13px}
+.example-label{font-size:11px}
+.comparison-run-head{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid var(--line)}
+.comparison-run-head>div{display:flex;flex-direction:column;gap:6px;padding:24px}
+.comparison-run-head>div+div{border-left:1px solid var(--line)}
+.comparison-run-head small,.comparison-run-head span{color:var(--muted);font-size:12px}
+.comparison-run-head strong{font-size:28px;font-weight:500}
+.comparison-summary{display:flex;flex-wrap:wrap;gap:24px;padding:16px 24px;font-size:13px;border-bottom:1px solid var(--line)}
+.comparison-summary span{color:var(--muted)}
+.home-warning{padding:16px 24px;background:var(--warning-bg);color:var(--warning-ink);font-size:13px}
+.comparison-filters{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:20px 24px 8px}
+.comparison-filters>div{display:flex;flex-wrap:wrap;gap:8px}.comparison-filters p{flex-basis:100%;font-size:12px;margin:0}
+.comparison-filters .reset-comparison{background:transparent;border-color:transparent;color:var(--muted)}
+.live-comparison table{table-layout:fixed;min-width:720px}.live-comparison th:last-child{width:130px}
+.live-comparison .field-inspect{padding:8px 0;min-height:44px;border:0;background:transparent;text-align:left;font-size:13px;color:var(--ink);text-decoration:underline;text-underline-offset:4px}
+.field-inspect span{color:var(--muted)}.inspected-row{background:#202020}
+.field-evidence{padding:24px;background:#191919;border-block:1px solid var(--line)}
+.field-evidence:focus-visible{outline-offset:-3px}.field-evidence p{font-size:13px;overflow-wrap:anywhere}.close-evidence{margin-bottom:20px}
+.evidence-columns{display:grid;grid-template-columns:1fr 1fr;gap:28px}.evidence-columns h4{font:12px/1.6 Consolas,monospace}.evidence-columns dl{font-size:12px}
+.evidence-columns dl>div{border-top:1px solid var(--line);padding-block:8px}.evidence-columns dt{color:var(--muted)}.evidence-columns dd{margin:2px 0 0;overflow-wrap:anywhere}
+.comparison-empty,.comparison-note{padding:20px 24px;font-size:13px}.comparison-note p{margin:0;font-size:13px}.comparison-note strong{color:var(--ink)}
+.home-provenance{padding:0 24px 16px;border-top:1px solid var(--line)}.home-provenance p,.home-provenance a{font-size:13px;overflow-wrap:anywhere}
+.home-band{border-block:1px solid var(--line)}.home-two-column{display:grid;grid-template-columns:1fr 1fr;gap:64px;padding-block:64px}
+.home-two-column h2{font-size:32px}.home-two-column p,.home-two-column a{font-size:14px}
+@media(max-width:800px){.landing-page .home-hero{padding-block:64px}.configuration-section{gap:32px}.home-screen{padding-block:56px}}
+@media(max-width:600px){.landing-page h1{font-size:clamp(40px,9vw,56px)}.landing-page .hero-actions{align-items:flex-start;flex-direction:column;gap:16px}.configuration-section,.home-two-column,.evidence-columns{grid-template-columns:1fr;gap:28px}.configuration-section{padding-block:48px}.scenario-picker{padding-inline:8px;gap:0}.scenario-picker button{flex:1;padding:12px 8px}.scenario-picker button strong{font-size:12px}.comparison-toolbar{flex-direction:column;align-items:stretch;padding:20px 16px}.live-comparison select{font-size:16px}.comparison-run-head>div{padding:20px 14px}.comparison-run-head strong{font-size:24px}.comparison-run-head small,.comparison-run-head span{font-size:11px;overflow-wrap:anywhere}.comparison-filters,.field-evidence,.comparison-summary,.comparison-note,.home-provenance,.scroll-hint{padding-inline:16px}}
+

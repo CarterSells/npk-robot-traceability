@@ -1,0 +1,24 @@
+node_modules/
+.next/
+out/
+.tools/
+.cache/
+.env*
+!.env.example
+test-results/
+playwright-report/
+*.tsbuildinfo
+*.log
+.DS_Store
+# Customer/prospect information belongs outside this workspace.
+private/
+customer-data/
+prospects/
+__pycache__/
+*.pyc
+beta/.next/
+beta/.env*
+!beta/.env.example
+supabase/.temp/
+supabase/.branches/
+*.dump

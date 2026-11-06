@@ -1,0 +1,58 @@
+{
+  "openapi": "3.1.0",
+  "info": {"title": "Tavrik ingestion and approved reports", "version": "1.2.0", "description": "Run captures, execution evidence and scoped approved JSON reports. Use your administrator-configured private HTTPS origin. Physical execution and public deployment are not implied."},
+  "security": [{"machineBearer": []}],
+  "paths": {
+    "/api/v1/reports": {
+      "get": {
+        "operationId":"getApprovedReports","summary":"Retrieve approved report revisions for one client project",
+        "security":[{"reportBearer":[]}],
+        "description":"60 requests/minute per credential. Rechecks issuer, expiry, revocation and the recipient's current explicit client-project grant. Returns 25 immutable revisions ordered by publication_id, with next cursor or null. Unknown measurements remain null. Optional report_id requires an exact revision. Metadata only; no raw artifacts or permanent evidence links.",
+        "parameters":[{"name":"after","in":"query","schema":{"type":"string","pattern":"^[0-9]{1,15}$","default":"0"}},{"name":"report_id","in":"query","schema":{"type":"string","format":"uuid"}},{"name":"revision","in":"query","schema":{"type":"integer","minimum":1}}],
+        "responses":{"200":{"description":"Authorized report page","content":{"application/json":{"schema":{"type":"object","required":["rows","next"],"properties":{"rows":{"type":"array","maxItems":25,"items":{"type":"object","required":["publication_id","payload"],"properties":{"publication_id":{"type":"integer"},"payload":{"$ref":"./report-v1.schema.json"}}}},"next":{"type":["string","integer","null"]}}}}}},"400":{"description":"Invalid cursor or revision"},"401":{"description":"Missing report bearer"},"403":{"description":"Expired/revoked credential, issuer or recipient grant"},"429":{"$ref":"#/components/responses/Throttled"},"503":{"description":"Report feature disabled or service unavailable"}}
+      }
+    },
+    "/api/v1/events": {
+      "post": {
+        "operationId": "recordRunEvent",
+        "summary": "Atomically persist a capture or execution evidence and its receipt",
+        "description": "Requires events:write. Tenant/project/robot are resolved from the credential. Retry identical UTF-8 bytes with the same event_id and source_sequence. Sequence namespace spans both types per identity. Receipts survive rotation. run.recorded: max 2 MiB. execution.recorded: max 16 KiB normalized envelope, immutable attempt context plus evidence, run_id equals attempt UUID; exact snapshot must already exist. Validators enforce provenance, units and relationships. Receipt version is the capture workspace version or execution receipt format version 1, not a global ordering clock.",
+        "requestBody": {"required": true, "content": {"application/json": {"schema": {"$ref": "./event-v1.schema.json"}}}},
+        "responses": {
+          "200": {"description": "Committed or matching duplicate", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Receipt"}}}},
+          "400": {"$ref": "#/components/responses/Invalid"}, "401": {"$ref": "#/components/responses/Unauthorized"},
+          "403": {"$ref": "#/components/responses/Forbidden"}, "409": {"$ref": "#/components/responses/Conflict"},
+          "413": {"description": "Body exceeds event-type limit; queue retained"}, "429": {"$ref": "#/components/responses/Throttled"},
+          "503": {"description": "Disabled or unavailable; retry identical bytes later"}
+        }
+      }
+    },
+    "/api/v1/events/{event_id}": {
+      "get": {
+        "operationId": "getOwnEventReceipt", "summary": "Reconcile an acknowledgement lost during transport",
+        "description": "Requires receipts:read. Returns metadata only for the credential's own stable identity. Rechecks current authorization, expiry and revocation. Check body_hash against the SHA-256 of the queued bytes before removing them.",
+        "parameters": [{"name": "event_id", "in": "path", "required": true, "schema": {"type": "string", "format": "uuid"}}],
+        "responses": {"200": {"description": "Persisted receipt; duplicate is true", "content": {"application/json": {"schema": {"$ref": "#/components/schemas/Receipt"}}}}, "404": {"description": "No receipt for this identity/event; submit original queued bytes"}, "401": {"$ref": "#/components/responses/Unauthorized"}, "403": {"$ref": "#/components/responses/Forbidden"}, "429": {"$ref": "#/components/responses/Throttled"}, "503": {"description": "Disabled or unavailable"}}
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {"machineBearer": {"type": "http", "scheme": "bearer", "bearerFormat": "um_<64 lowercase hexadecimal characters>"},"reportBearer":{"type":"http","scheme":"bearer","bearerFormat":"tr_<64 lowercase hexadecimal characters>"}},
+    "schemas": {
+      "Receipt": {"type": "object", "additionalProperties": false, "required": ["event_id", "source_identity", "source_sequence", "received_at", "observed_at", "clock_skew", "body_hash", "version", "duplicate"], "properties": {
+        "event_id": {"type": "string", "format": "uuid"}, "source_identity": {"type": "string", "format": "uuid"},
+        "source_sequence": {"type": "integer", "minimum": 0, "maximum": 9007199254740991},
+        "received_at": {"type": "string", "format": "date-time"}, "observed_at": {"type": "string", "format": "date-time"},
+        "clock_skew": {"type": "boolean", "description": "Observed time more than five minutes ahead of server receipt time; original observation is retained"},
+        "body_hash": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "version": {"type": "integer", "minimum": 1}, "duplicate": {"type": "boolean"}
+      }}
+    },
+    "responses": {
+      "Invalid": {"description": "Invalid envelope/capture; actionable error string; no event committed"},
+      "Unauthorized": {"description": "Missing or malformed machine bearer credential"},
+      "Forbidden": {"description": "Revoked, expired, wrong scope or issuer no longer authorized"},
+      "Conflict": {"description": "Event ID, source sequence or immutable record conflict; retain and inspect original"},
+      "Throttled": {"description": "Identity request budget exhausted; retain queue", "headers": {"Retry-After": {"schema": {"type": "string", "const": "60"}}}}
+    }
+  }
+}

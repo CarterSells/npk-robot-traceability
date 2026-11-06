@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "synthetic": true,
+  "robot": { "id": "example-arm", "name": "Synthetic arm", "task": "Picking blocks" },
+  "author": "Synthetic example operator",
+  "hardware": "hardware.synthetic.json",
+  "settings": "settings.synthetic.json",
+  "metadata": {
+    "procedure": {
+      "field": { "state": "known", "value": "synthetic-pick-v1" },
+      "observedAt": "2026-10-01T10:00:00Z",
+      "evidence": "Invented example procedure",
+      "available": false
+    },
+    "object": {
+      "field": { "state": "known", "value": "synthetic-block-A" },
+      "observedAt": "2026-10-01T10:00:00Z",
+      "evidence": "Invented example object",
+      "available": false
+    },
+    "model": {
+      "field": { "state": "not-applicable", "reason": "This invented example uses no learned model." },
+      "observedAt": "2026-10-01T10:00:00Z",
+      "evidence": "Invented example declaration",
+      "available": false
+    }
+  }
+}

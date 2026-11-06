@@ -1,0 +1,2 @@
+import Workspace from '../../../app/local/workspace';
+export default function DemoPage() { return <><header className="beta-bar"><strong>Tavrik · DEMO</strong><a href="/">Sign in or create account</a></header><section className="beta-controls"><h1>Explore without an account</h1><p>Choose Load synthetic example below, or add a test robot. This workspace keeps drafts in this tab. Export JSON before closing to keep your work; it does not save to your team’s database.</p></section><Workspace /></>; }

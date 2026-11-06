@@ -1,0 +1,14 @@
+import Link from 'next/link';
+import { readSiteConfig } from '../lib/site-config.mjs';
+import MarketingMotion from './marketing-motion';
+import './marketing.css';
+const links = [['Home','/'],['Services','/services/'],['Sectors','/sectors/'],['About','/about/']];
+export const localWorkspace = process.env.NODE_ENV === 'development';
+export function MarketingShell({active,children}:{active:string;children:React.ReactNode}) {
+ const config = readSiteConfig();
+ return <MarketingMotion><a className="skip-link" href="#main">Skip to content</a><header className="m-header m-wrap"><Link className="m-logo" href="/" aria-label="Tavrik home">Tavrik<span aria-hidden="true">↗</span></Link><nav aria-label="Main navigation">{links.map(([name,href]) => <Link key={href} href={href} aria-current={active===name?'page':undefined}>{name}</Link>)}</nav><Link className="m-product-link" href={localWorkspace?'/workspace/':'/demo/'}>{localWorkspace?'Workspace':'Working demo'} <span aria-hidden="true">↗</span></Link></header><main id="main">{children}</main><footer className="m-footer m-wrap"><div className="m-footer-top"><Link className="m-logo" href="/">Tavrik</Link><p>A clearer record.<br/>A better starting point.</p><div><Link href="/about/#founders">Talk to the founders ↗</Link><Link href="/walkthrough/">Product walkthrough</Link><Link href="/security/">Security &amp; data handling</Link><Link href="/compatibility/">Compatibility preview</Link></div></div><div className="m-footer-bottom"><span>© 2026 Tavrik</span><span>Robot configuration history</span><span>{config.launchReady?'Synthetic examples · No robot connection':'Local preview · Publication pending'}</span></div></footer></MarketingMotion>;
+}
+export function PageIntro({number,label,title,text}:{number:string;label:string;title:string;text:string}) { return <section className="m-intro m-wrap"><p className="m-kicker">{number} / {label}</p><h1>{title}</h1><p className="m-lead">{text}</p></section>; }
+export function EditorialLink({href,number,title,children}:{href:string;number:string;title:string;children:React.ReactNode}) { return <Link href={href} className="m-editorial-link" data-reveal><span className="m-kicker">{number}</span><div><h2>{title}</h2><p>{children}</p></div><span className="m-arrow" aria-hidden="true">↗</span></Link>; }
+export function RecordSculpture() { return <div className="m-sculpture" role="img" aria-label="Abstract illustration of configuration layers joining a single robot-test record"><div className="m-orbit"/><div className="m-orbit m-orbit-two"/><div className="m-spine"/>{['HARDWARE','SOFTWARE','CALIBRATION','MODEL + DATA'].map((label,index)=><div key={label} className={`m-slab slab-${index}`}><span>0{index+1}</span><strong>{label}</strong><i/></div>)}<span className="m-art-caption">CONFIGURATION STUDY — ILLUSTRATION</span></div>; }
+

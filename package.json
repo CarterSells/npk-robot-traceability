@@ -1,0 +1,47 @@
+{
+  "name": "tavrik-outreach",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1",
+    "build": "next build && node scripts/exclude-local-export.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "preview": "node scripts/preview.mjs",
+    "check:release": "node scripts/check-release.mjs",
+    "check:beta-deployment": "node scripts/check-beta-deployment.mjs",
+    "test:browser": "playwright test",
+    "test:local": "playwright test --config playwright.local.config.ts",
+    "dev:beta": "next dev beta --hostname 127.0.0.1 --port 3002",
+    "build:beta": "next build beta",
+    "start:beta": "next start beta --hostname 127.0.0.1 --port 3002",
+    "test:beta": "node --experimental-strip-types --test tests/beta/*.test.mjs",
+    "db:start": "node scripts/local-supabase.mjs start",
+    "db:stop": "node scripts/local-supabase.mjs stop",
+    "db:status": "node scripts/local-supabase.mjs status",
+    "db:env": "node scripts/local-supabase.mjs env",
+    "db:seed": "node --experimental-strip-types scripts/local-supabase-data.mjs seed",
+    "db:verify": "node --experimental-strip-types scripts/local-supabase-data.mjs verify",
+    "db:setup": "npm run db:start && npm run db:seed",
+    "dev:local": "node scripts/dev-local-beta.mjs"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "dependencies": {
+    "@next/env": "16.3.8",
+    "next": "16.3.8",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@electric-sql/pglite": "^0.5.9",
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.6.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "supabase": "2.121.0",
+    "typescript": "7.0.2"
+  }
+}

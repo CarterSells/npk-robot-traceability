@@ -1,0 +1,13 @@
+# Second CAD connector specification
+
+This is a proposed connector, not an implemented integration. Follow [build.md](../build.md) and the [v1 connector contract](onshape-integration.md). No SOLIDWORKS/PDM installation, license, vault, service account or supported controller inventory has been supplied.
+
+Inventory before implementation: exact SOLIDWORKS year/service pack and Windows version; standalone desktop versus PDM Standard/Professional versus cloud product; vault/server version; installed API/runtime; read permissions; revision/version behavior; network owner; approved metadata and intended write operation. Do not treat those products as interchangeable. The [official PDM API getting-started entry](https://help.solidworks.com/2026/english/api/pdmprowebapihelp/GettingStarted.html) must be checked against the actual installation; the public page did not expose its detailed content in this review.
+
+For a desktop-only installation, propose a signed Windows agent running under a dedicated least-privilege local account, using the installed supported desktop API. Keep CAD files and application execution local. For PDM, prefer a supported vault API with explicit vault/project scope; record vault identity, file ID, immutable file version and revision separately. A mutable path or revision label alone is insufficient. Cloud products require a separately verified authentication/API contract.
+
+Agent protocol: outbound HTTPS with an independent scoped machine identity; approved metadata preview, exact source version, observed/received times, durable bounded local queue and deduplication. Secrets stay in OS-protected storage; upgrades verify signatures and preserve queued records. Disconnect/revoke stops new transmission. No inbound internet access to the workstation or vault.
+
+First delivery is read-only custom properties and exact design references, explicitly approved into new snapshots. Local file hashes may supplement identity but never prove physical installation. Use the existing JSON/CSV metadata adapter until a supported installation is available. Proposed writes remain disabled until one exact API operation is selected, permissions and expected-version preconditions are verified, and unknown-outcome reconciliation is tested. Do not launch desktop CAD automation from a cloud HTTP request.
+
+Acceptance: approved installation matrix, synthetic vault/document, replay and offline restart, revoked credentials, stale version, cross-project/tenant denial, missing fields, unchanged manual hardware evidence, API failure/ambiguous writes, signed-agent upgrade/rollback and operator recovery. Real installation verification and any licensing decisions remain external prerequisites; no purchase is assumed.

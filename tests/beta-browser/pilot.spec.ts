@@ -1,0 +1,43 @@
+import {test,expect} from '@playwright/test';
+import AxeBuilder from '@axe-core/playwright';
+import {readFile} from 'node:fs/promises';
+import {demoRecords} from '../../lib/demo/fixtures';
+import {pilotSummary,type PilotData} from '../../lib/beta/pilot';
+const org='00000000-0000-4000-8000-000000000001';
+test('owner enrolls, appends review and exports; responsive accessible pilot (mocked)',async({page})=>{
+ const data:PilotData={plan:null,reviews:[],activity:[]};let role='owner';let comparisons=0;
+ await page.route('**/api/**',async route=>{
+  const path=new URL(route.request().url()).pathname;let response:unknown={};
+  if(path==='/api/session')response={user:{email:'synthetic@example.invalid'},memberships:[{org_id:org,role,organizations:{name:'Synthetic team'}}]};
+  else if(path.endsWith('/workspace'))response={version:1,role,bundle:{format:'unify-local',version:1,synthetic:true,records:demoRecords,corrections:[]}};
+  else if(path.endsWith('/members'))response=[];
+  else if(path.endsWith('/access'))response={invitations:[],credentials:[]};
+  else if(path.endsWith('/pilot'))response=pilotSummary(data);
+  else if(path.endsWith('/pilot-plan'))data.plan={payload:route.request().postDataJSON(),synthetic:true,created_at:new Date().toISOString()};
+  else if(path.endsWith('/pilot-review'))data.reviews.push({week:1,revision:data.reviews.length+1,payload:route.request().postDataJSON(),recorded_at:new Date().toISOString()});
+  else if(path.endsWith('/pilot-comparison'))comparisons++;
+  await route.fulfill({json:response});
+ });
+ await page.goto('/');await page.getByRole('combobox',{name:'Organization',exact:true}).selectOption(org);
+ await page.getByText('Four-week pilot · owner dashboard',{exact:true}).click();
+ await page.getByLabel('Agreed workflow and responsibilities').fill('Synthetic procedure, owner confirms hardware.');
+ await page.getByLabel('Negotiated success criteria').fill('Rehearse measurement; no customer claims.');
+ await page.getByRole('button',{name:'Enroll pilot',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Synthetic rehearsal — not customer evidence'})).toBeVisible();
+ await page.getByLabel('Founder support minutes').fill('0');
+ await page.getByLabel('Expected eligible runs').fill('10');await page.getByLabel('Matching captured runs').fill('9');
+ await page.getByLabel('Independent runner denominator source and scope').fill('Synthetic runner, same UTC interval, unique IDs.');
+ await page.getByLabel('Measurement method, buyer response, limitations and correction reason').fill('Synthetic rehearsal only; assistance unknown.');
+ await page.getByRole('button',{name:'Save weekly review'}).click();await expect(page.getByText('Review saved as a new revision.')).toBeVisible();
+ await expect(page.getByRole('region',{name:'Week 1 summary'})).toContainText('90.0%');
+ await expect(page.getByRole('region',{name:'Week 2 summary'})).toContainText('Not yet observed');
+ await expect(page.getByLabel('Review week').locator('option[value="2"]')).toHaveJSProperty('disabled',true);
+ expect(data.reviews[0].payload.assistedSessions).toBeNull();expect(data.reviews[0].payload.supportMinutes).toBe(0);
+ const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Export pilot summary'}).click();const download=await downloadPromise;expect(download.suggestedFilename()).toBe('tavrik-pilot-summary.json');
+ const exported=JSON.parse(await readFile((await download.path())!,'utf8'));expect(exported.weeks[0].coveragePercent).toBe(90);expect(exported.weeks[1].activeOrganizations).toBeNull();expect(exported.records).toBeUndefined();
+ for(const width of [320,768,1440]){await page.setViewportSize({width,height:960});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);}
+ expect((await new AxeBuilder({page}).include('.pilot-panel').analyze()).violations).toEqual([]);
+ await page.screenshot({path:'test-results/pilot-browser/owner-dashboard.png',fullPage:true});
+ await page.getByRole('combobox',{name:'Target run',exact:true}).selectOption('run-043');await page.getByRole('combobox',{name:'Successful baseline',exact:true}).selectOption('run-042');await expect.poll(()=>comparisons).toBe(1);
+ role='viewer';await page.reload();await page.getByRole('combobox',{name:'Organization',exact:true}).selectOption(org);await expect(page.locator('.pilot-panel')).toHaveCount(0);
+});

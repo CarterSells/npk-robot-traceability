@@ -1,0 +1,17 @@
+# Investigations and client portal (B7)
+
+Implements the approved scope in [build.md](../build.md) sections 6 and 10 and [B7](backend-master-prompts.md). Synthetic staging acceptance is recorded in [progress](build-progress.md); this is not production/customer validation.
+
+Internal engineers open saved runs from paginated history, compare exact snapshots and append investigation revisions using the [investigation workflow](investigations.md). Drafts require explicit Save to organization. Notes and full evidence never appear in the restricted client portal.
+
+Owners, administrators and engineers can explicitly share a run summary or publish a reviewed execution outcome to its existing project. Execution publication verifies the timeline cutoff again inside the database transaction. New evidence requires another review; repeated publication of the same cutoff/content is idempotent. Revisions append. Clients receive only attempt ID, projected outcome, last reported observation time, reality, collection method, uncertainty flag and publication metadata. No internal notes, publisher identity or configuration payload is included. CAD installation and failure causes are not inferred.
+
+Client accounts receive explicit project grants, never organization membership. Each page and update subscription checks the current session and project permission. The portal lists published run history and execution outcomes with pagination, publication state, last successful refresh and unavailable prediction status. An old publication remains a historical assessment until another revision is deliberately published.
+
+`GET /api/client-updates/:org/:project` is a same-origin cookie-authenticated server-sent event stream. It carries only publication watermarks and check timestamps. Authorization and RLS-filtered watermarks are checked about every five seconds; streams close after five checks and reconnect. Full page reads independently authorize and redact data. Failed authorization emits an unavailable event and clears displayed records. Offline mode clears records; reconnect and tab visibility trigger refetch. Thirty-second authorized polling provides fallback. No Supabase JWT is placed in a URL or exposed to the browser, and no public Realtime channel is used.
+
+These are bounded staging update intervals, not a measured five-second capacity SLA. Hosting must support streamed responses without buffering; B13 must load-test query/connection cost. The existing project chooser is bounded to 100 accessible projects. Record pages contain 25 publications. The local investigation editor retains its documented size limits; complete history exports remain separate.
+
+Deployment: the B7 migration `20261026013855_b7_portal.sql` was already installed on the selected synthetic project as remote version `20261026014711`. Do not replay it. `BETA_PORTAL_ENABLED=true` enables publication/updates only after local, hosted and browser acceptance. Disable the flag to stop new execution publications/subscriptions while preserving history. Never remove immutable rows to roll back UI behavior.
+
+Verified checks cover client isolation, column redaction, denied/stale/duplicate publication, save/relogin investigation history, revoked subscription access, cancellation, pagination, streamed browser refresh, offline/reconnect, keyboard/mobile accessibility and production build. No external report delivery, prediction model, production hosting or customer pilot is established by B7.

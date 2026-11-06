@@ -1,0 +1,32 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "$id":"urn:unify:execution-payload:1",
+ "title":"Execution evidence payload v1",
+ "description":"16 KiB maximum normalized envelope. Exact relationships, unit semantics and finite values are also checked by the application validators. run_id is this attempt_id. Reuse identical attempt metadata in each event; sequence is allocated across the source identity, including capture events.",
+ "type":"object","additionalProperties":false,"required":["attempt","evidence"],
+ "properties":{
+  "attempt":{"type":"object","additionalProperties":false,"required":["job_id","attempt_id","retry_of","robot_id","snapshot_id","snapshot_revision","source_identity","procedure","procedure_version","task","environment","components","reality","method"],"properties":{
+   "job_id":{"$ref":"#/$defs/uuid"},"attempt_id":{"$ref":"#/$defs/uuid"},"retry_of":{"anyOf":[{"$ref":"#/$defs/uuid"},{"type":"null"}]},
+   "robot_id":{"$ref":"#/$defs/id"},"snapshot_id":{"$ref":"#/$defs/id"},"snapshot_revision":{"type":"integer","minimum":1,"maximum":9007199254740991},"source_identity":{"$ref":"#/$defs/uuid"},
+   "procedure":{"$ref":"#/$defs/field"},"procedure_version":{"$ref":"#/$defs/field"},"task":{"$ref":"#/$defs/field"},"environment":{"$ref":"#/$defs/field"},"components":{"$ref":"#/$defs/field"},"reality":{"enum":["real","simulation","synthetic"]},"method":{"const":"collector"}
+  }},
+  "evidence":{"type":"object","additionalProperties":false,"required":["kind","payload","correction_of","reason"],"properties":{
+   "kind":{"enum":["state","acknowledged","step","measurement","label","component"]},"payload":{"type":"object"},"correction_of":{"anyOf":[{"$ref":"#/$defs/uuid"},{"type":"null"}]},"reason":{"anyOf":[{"$ref":"#/$defs/text"},{"type":"null"}]}
+  },"allOf":[
+   {"if":{"properties":{"kind":{"const":"state"}}},"then":{"properties":{"payload":{"type":"object","additionalProperties":false,"required":["state"],"properties":{"state":{"$ref":"#/$defs/state"}}}}}},
+   {"if":{"properties":{"kind":{"const":"acknowledged"}}},"then":{"properties":{"correction_of":{"type":"null"},"payload":{"type":"object","maxProperties":0}}}},
+   {"if":{"properties":{"kind":{"const":"step"}}},"then":{"properties":{"payload":{"type":"object","additionalProperties":false,"required":["step_id","state"],"properties":{"step_id":{"$ref":"#/$defs/id"},"state":{"$ref":"#/$defs/state"}}}}}},
+   {"if":{"properties":{"kind":{"const":"measurement"}}},"then":{"properties":{"payload":{"type":"object","additionalProperties":false,"required":["name","state","value","unit","reason"],"properties":{"name":{"$ref":"#/$defs/id"},"state":{"enum":["known","unknown","not-applicable"]},"value":{"type":["number","null"]},"unit":{"type":"string","minLength":1,"maxLength":40},"reason":{"anyOf":[{"$ref":"#/$defs/text"},{"type":"null"}]}}}}}},
+   {"if":{"properties":{"kind":{"const":"label"}}},"then":{"properties":{"payload":{"type":"object","additionalProperties":false,"required":["name","value","evidence"],"properties":{"name":{"$ref":"#/$defs/id"},"value":{"$ref":"#/$defs/text"},"evidence":{"type":"string","minLength":1,"maxLength":500}}}}}},
+   {"if":{"properties":{"kind":{"const":"component"}}},"then":{"properties":{"payload":{"type":"object","additionalProperties":false,"required":["component_id","action","evidence","hours","cycles"],"properties":{"component_id":{"$ref":"#/$defs/id"},"action":{"enum":["installed","removed","maintained","serviced"]},"evidence":{"type":"string","minLength":1,"maxLength":500},"hours":{"type":["number","null"],"minimum":0},"cycles":{"type":["integer","null"],"minimum":0,"maximum":9007199254740991}}}}}},
+   {"if":{"properties":{"correction_of":{"type":"null"}}},"then":{"properties":{"reason":{"type":"null"}}},"else":{"properties":{"reason":{"$ref":"#/$defs/text"}}}}
+  ]}
+ },
+ "$defs":{
+  "uuid":{"type":"string","pattern":"^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$"},
+  "id":{"type":"string","pattern":"^[a-zA-Z0-9][a-zA-Z0-9._-]{0,119}$"},
+  "text":{"type":"string","minLength":1,"maxLength":240},
+  "state":{"enum":["requested","queued","running","succeeded","failed","cancelled","timed-out","unknown"]},
+  "field":{"oneOf":[{"type":"object","additionalProperties":false,"required":["state","value"],"properties":{"state":{"const":"known"},"value":{"$ref":"#/$defs/text"}}},{"type":"object","additionalProperties":false,"required":["state","reason"],"properties":{"state":{"enum":["unknown","not-applicable"]},"reason":{"$ref":"#/$defs/text"}}}]}
+ }
+}

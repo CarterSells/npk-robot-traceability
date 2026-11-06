@@ -1,0 +1,4 @@
+{
+  "gripForce": 25,
+  "conditions": { "speed_m_s": 0.25, "ambient_C": 22, "payload_kg": 1 }
+}

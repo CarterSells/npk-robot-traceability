@@ -1,0 +1,8 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { MarketingShell, PageIntro, EditorialLink, RecordSculpture } from '../../marketing-shell';
+import RunComparison from '../../run-comparison';
+import '../../landing.css';
+export const metadata: Metadata = { title: "RUN COMPARISON — Tavrik", description: "Choose a successful baseline, check the test conditions, and inspect what changed. The engineer decides what to investigate.", alternates: { canonical: '/services/run-comparison/' } };
+export default function Page() { return <MarketingShell active="Services"><PageIntro number="01.2" label="RUN COMPARISON" title="Compare before guessing." text="Choose a successful baseline, check the test conditions, and inspect what changed. The engineer decides what to investigate."/><div className="m-wrap m-content"><div className="m-dark-panel m-comparison"><RunComparison/></div><section className="m-split"><div><h2>Differences are a starting point.</h2><p>The example above uses invented records and the working comparison engine. Missing evidence never proves sameness. Changes in procedure or conditions limit how a comparison can be interpreted.</p></div><div><h3>Keep the setup that worked</h3><p>The full demo includes a successful run’s exact snapshot reference and an engineer-led recreation checklist. Verify artifacts, confirm physical hardware, and retest through your existing process.</p><p>Tavrik does not diagnose a cause or deploy and roll back robot changes.</p><Link className="m-text-link" href="/demo/">Open the full working demo ↗</Link></div></section></div></MarketingShell>; }
+

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "hardware": { "state": "known", "value": { "component": "synthetic-gripper", "revision": "A" } },
+  "author": "Synthetic hardware reporter",
+  "confirmedAt": "2026-10-01T10:00:00Z",
+  "evidence": "Invented operator report; no physical verification",
+  "available": false
+}

@@ -1,0 +1,26 @@
+{
+ "$schema":"https://json-schema.org/draft/2020-12/schema",
+ "title":"Tavrik approved report v1",
+ "type":"object","additionalProperties":false,
+ "required":["schema_version","report_id","revision","previous_revision","project_id","client_id","generated_at","period","runs","engineer_conclusion","model_assessment","correction_reason"],
+ "properties":{
+  "schema_version":{"const":1},"report_id":{"type":"string","format":"uuid"},"project_id":{"type":"string","format":"uuid"},"client_id":{"type":"string","format":"uuid"},
+  "revision":{"type":"integer","minimum":1},"previous_revision":{"type":["integer","null"],"minimum":1},"generated_at":{"type":"string","format":"date-time"},
+  "correction_reason":{"type":["string","null"],"minLength":1,"maxLength":500},
+  "period":{"type":"object","additionalProperties":false,"required":["start","end","basis"],"properties":{"start":{"type":"string","format":"date-time"},"end":{"type":"string","format":"date-time"},"basis":{"const":"attempt_recorded_at"}}},
+  "runs":{"type":"array","minItems":1,"maxItems":25,"items":{"$ref":"#/$defs/run"}},
+  "engineer_conclusion":{"oneOf":[{"type":"null"},{"type":"object","additionalProperties":false,"required":["text","method"],"properties":{"text":{"type":"string","minLength":1,"maxLength":500},"method":{"const":"explicitly published engineer statement"}}}]},
+  "model_assessment":{"type":"object","additionalProperties":false,"required":["state","reason"],"properties":{"state":{"const":"unavailable"},"reason":{"const":"No validated predictive model is active."}}}
+ },
+ "allOf":[{"if":{"properties":{"revision":{"const":1}}},"then":{"properties":{"previous_revision":{"type":"null"},"correction_reason":{"type":"null"}}},"else":{"properties":{"previous_revision":{"type":"integer","minimum":1},"correction_reason":{"type":"string","minLength":1}}}}],
+ "$defs":{
+  "measurement":{"type":"object","additionalProperties":false,"required":["name","state","value","unit"],"properties":{"name":{"type":"string","minLength":1,"maxLength":120},"state":{"enum":["known","unknown","not-applicable"]},"value":{"type":["number","null"]},"unit":{"type":["string","null"],"minLength":1,"maxLength":40}},"allOf":[{"if":{"properties":{"state":{"const":"known"}}},"then":{"properties":{"value":{"type":"number"},"unit":{"type":"string"}}},"else":{"properties":{"value":{"type":"null"}}}}]},
+  "run":{"type":"object","additionalProperties":false,"required":["attempt_id","job_id","robot_id","snapshot","reality","method","outcome","duration","measurements","evidence"],"properties":{
+   "attempt_id":{"type":"string","format":"uuid"},"job_id":{"type":"string","format":"uuid"},"robot_id":{"type":"string","minLength":1,"maxLength":120},
+   "snapshot":{"type":"object","additionalProperties":false,"required":["id","revision"],"properties":{"id":{"type":"string","minLength":1,"maxLength":120},"revision":{"type":"integer","minimum":1}}},
+   "reality":{"enum":["real","simulation","synthetic"]},"method":{"enum":["manual","collector"]},"outcome":{"enum":["requested","queued","running","succeeded","failed","cancelled","timed-out","unknown"]},
+   "duration":{"$ref":"#/$defs/measurement"},"measurements":{"type":"array","maxItems":10,"items":{"$ref":"#/$defs/measurement"}},
+   "evidence":{"type":"object","additionalProperties":false,"required":["completion_observed","uncertainty","selected_measurements_known","selected_measurements_total"],"properties":{"completion_observed":{"type":"boolean"},"uncertainty":{"type":"boolean"},"selected_measurements_known":{"type":"integer","minimum":0,"maximum":10},"selected_measurements_total":{"type":"integer","minimum":0,"maximum":10}}}
+  }}
+ }
+}
